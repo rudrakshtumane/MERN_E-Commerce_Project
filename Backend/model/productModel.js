@@ -14,3 +14,11 @@ const productSchema = new mongoose.Schema({
 module.exports = mongoose.model("Product", productSchema);
 
 
+// {
+//     "name": "Casino tourbillon",
+//     "category":"watch" ,
+//     "price":$280000 ,
+//     "description":"Custom made for neymar jr" ,
+//     "quantity":2 ,
+
+// }
