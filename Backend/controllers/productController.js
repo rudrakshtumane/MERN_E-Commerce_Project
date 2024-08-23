@@ -1,5 +1,5 @@
 const Product = require("../model/productModel");
-// const Category = require('../model/categoryModel');
+const Category = require('../model/categoryModel');
 
 async function createProduct(req, res) {
   try {

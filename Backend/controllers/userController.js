@@ -1,27 +1,32 @@
 const User = require("../model/userModel");
 const jwt = require("jsonwebtoken");
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 
-
-
-
-registerUser = async (req, res) => {
+  async function registerUser (req, res){
+    console.log(req.body);
   const { username, email, password, mobileNumber, role } = req.body;
   try {
     const existUser = await User.findOne({ email });
+   
     if (!existUser) {
       const user = new User({ username, email, password, mobileNumber, role });
+      console.log(user, 'found');
       await user.save();
-      return res.status(201).json({ message: "User registered successfully" });
+      console.log('user saved');
+      return res.status(201).send({ message: "User registered successfully" });
     } else {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).send({ message: "User already exists" });
     }
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("Error in registerUser:", error);
+    return res.status(500).send({ error: error.message });
   }
 };
 
-loginUser = async (req, res) => {
+  async function loginUser (req, res)  {
 
     try {
       const { email, password } = req.body;
@@ -29,7 +34,8 @@ loginUser = async (req, res) => {
       if (!user || !(await user.comparePassword(password))) {
         return res.status(400).send({ error: 'Invalid login credentials' });
       }
-      const token = jwt.sign({ _id: user._id }, 'Rudra', { expiresIn: "1h"});
+      const payload = { user: { id: user.id, role: user.role } };
+      const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
       res.status(200).send({accessToken: token});
     } catch (error) {
       res.status(500).send(error);

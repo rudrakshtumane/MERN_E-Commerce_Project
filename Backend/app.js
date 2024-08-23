@@ -2,8 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/userRoute');
-// const categoryRoutes = require('./routes/categoryRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
 const productRoutes = require('./routes/productRoutes');
+const cors = require('cors');
+
 
 
 const app = express();
@@ -24,6 +26,7 @@ app.listen(port, () => {
     console.log(`server is running on ${port}`)
 })  
 
-
+app.use(cors({ origin: 'http://localhost:5173' }));
 app.use('/api/user',userRoutes);
-app.use('/api', productRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/Categories', categoryRoutes);
