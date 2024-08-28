@@ -2,6 +2,7 @@ const User = require("../model/userModel");
 const jwt = require("jsonwebtoken");
 const dotenv = require('dotenv');
 
+
 dotenv.config();
 
 
@@ -18,7 +19,7 @@ dotenv.config();
       console.log('user saved');
       return res.status(201).send({ message: "User registered successfully" });
     } else {
-      return res.status(400).send({ message: "User already exists" });
+      return res.status(200).send({ message: "User already exists" });
     }
   } catch (error) {
     console.error("Error in registerUser:", error);
@@ -36,10 +37,27 @@ dotenv.config();
       }
       const payload = { user: { id: user.id, role: user.role } };
       const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-      res.status(200).send({accessToken: token});
+      res.status(202).send({accessToken: token});
     } catch (error) {
       res.status(500).send(error);
     }
 };
 
-module.exports = { registerUser, loginUser };
+
+async function getUserInfo(req, res){
+  const id = req.user.id;
+  try {
+    const user = await User.findOne({_id: id});
+    if(!user){
+      return res.status(200).send({ message: "User not found", success: false });
+    }else{
+      return res.status(200).send({ 
+        user, success: true });
+    }
+    
+  } catch (error) {
+    res.status(500).send(error);
+  }
+}
+
+module.exports = { registerUser, loginUser, getUserInfo };
