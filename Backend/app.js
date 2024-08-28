@@ -22,11 +22,14 @@ mongoose.connection.once('open', () => {
 });
 
 
-app.listen(port, () => {
-    console.log(`server is running on ${port}`)
-})  
 
 app.use(cors({ origin: 'http://localhost:5173' }));
 app.use('/api/user',userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/Categories', categoryRoutes);
+
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
+
+app.listen(port, () => {
+    console.log(`server is running on ${port}`)
+})  
