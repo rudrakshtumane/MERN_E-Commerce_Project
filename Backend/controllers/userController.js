@@ -46,6 +46,7 @@ dotenv.config();
 
 async function getUserInfo(req, res){
   const id = req.user.id;
+  console.log(req.user.id)
   try {
     const user = await User.findOne({_id: id});
     if(!user){
