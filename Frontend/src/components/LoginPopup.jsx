@@ -1,11 +1,14 @@
 /* eslint-disable react/prop-types */
 import axios from 'axios';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../context/UserContext';
+import authService from '../service/AuthService';
 import Toast from './Toast';
 
 
 const LoginPopup = ({ setShowLogin }) => {
+  const { setUser } = useContext(UserContext);
   const [currState, setCurrState] = useState("Sign Up");
   const [role, setRole] = useState('user');
   const [username, setUsername] = useState('');
@@ -14,13 +17,14 @@ const LoginPopup = ({ setShowLogin }) => {
   const [mobileNumber, setMobileNumber] = useState('');
   const [toast, setToast] = useState({ message: '', type: '', show: false });
 
+  const navigate = useNavigate();
 
   const showToast = (message, type) => {
     setToast({ message, type, show: true });
     setTimeout(() => setToast({ ...toast, show: false }), 5000);
   };
 
-  const Navigate = useNavigate();
+  
 
   const register = async (payload) => {
     try {
@@ -37,13 +41,13 @@ const LoginPopup = ({ setShowLogin }) => {
 
   const login = async (payload) => {
     try {
-      const response = await axios.post('http://localhost:5002/api/user/loginUser', payload);
-      console.log(response.data);
-      localStorage.setItem('token', response.data.token);
-      Navigate('/dashboard');
+      const token = await authService.login(payload.email, payload.password);
+      const user = await authService.getUser();
+      setUser(user);
       showToast('Login Successful!', 'success');
+      setShowLogin(false);
+      navigate('/dashboard');
     } catch (error) {
-      console.log(error);
       showToast('Login failed. Please try again.', 'error');
     }
   };
@@ -61,7 +65,7 @@ const LoginPopup = ({ setShowLogin }) => {
 
   return (
     <div className="absolute z-10 w-full h-full bg-black/60 grid">
-      <form onSubmit={handleSubmit} className="place-self-center w-[23vw] min-w-[330px] text-gray-500 bg-white flex flex-col gap-6 p-6 rounded-md text-sm animate-fadeIn">
+      <form onSubmit={handleSubmit} className="place-self-center w-[23vw] min-w-[330px] text-gray-500 bg-white flex flex-col gap-6 p-6  rounded-md text-sm animate-fadeIn">
         <div className="flex justify-between items-center text-black">
           <h2>{currState}</h2>
           <button onClick={() => setShowLogin(false)} className="w-4 cursor-pointervtext-3xl font-bold">X</button>
@@ -113,7 +117,7 @@ const LoginPopup = ({ setShowLogin }) => {
             className="outline-none border bg-white border-gray-300 p-2 rounded-md"
           />
         </div>
-        <button type="submit" className="border-none p-2 rounded-md text-white bg-red-500 text-base cursor-pointer">
+        <button type="submit" className="btn border-none p-2 rounded-md text-white  text-base cursor-pointer">
           {currState === "Sign Up" ? "Create Account" : "Login"}
         </button>
         <div className="flex items-start gap-2 -mt-3">

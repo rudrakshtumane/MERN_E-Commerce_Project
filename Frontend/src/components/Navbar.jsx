@@ -1,10 +1,36 @@
 /* eslint-disable react/prop-types */
-import React from 'react'
+import React, { useContext, useState } from 'react'
+
+import { UserContext } from '../context/UserContext';
+import { Link, useNavigate } from 'react-router-dom';
+import AuthService from '../service/AuthService';
+
 
 const Navbar = ({setShowLogin}) => {
+  const { user,setUser } = useContext(UserContext);
+  const [searchQuery, setSearchQuery] = useState('');
+ const navigate = useNavigate()
+ 
+  const handleLogout = (user) => {
+   AuthService.logout();
+   setUser(null);
+   navigate('/')
+  }
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    // Implement search functionality here, e.g., navigating to search results
+    navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+  };
+
+
   return (
     <div>
-        <div className="navbar bg-inherit p-5">
+        <div className="navbar bg-inherit  p-5">
   <div className="navbar-start">
     <div className="dropdown">
       <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -38,22 +64,46 @@ const Navbar = ({setShowLogin}) => {
     <a className=" text-3xl text-black font-thin cursor-pointer ">RS clothing</a>
   </div>
   <div className="navbar-center hidden lg:flex bg-inherit">
-    <ul className="menu menu-horizontal px-1 text-black font-semibold ">
-      <li><a>Home</a></li>
-      <li>
-        <details>
-          <summary>Categories</summary>
-          <ul className="p-2 text-black font-semibold bg-white">
-            <li><a>Mens</a></li>
-            <li><a>Womens </a></li>
-          </ul>
-        </details>
-      </li>
-      <li><a>Contact</a></li>
-    </ul>
+  {user ? (
+            <form onSubmit={handleSearchSubmit} className="w-full">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                placeholder="Search..."
+                className="input input-bordered w-full bg-white"
+              />
+            </form>
+          ) : (
+            <ul className="menu menu-horizontal px-1 text-black font-semibold">
+              <li><Link to="/">Home</Link></li>
+              <li>
+                <details>
+                  <summary>Categories</summary>
+                  <ul className="p-2 text-black font-semibold bg-white">
+                    <li><a>Mens</a></li>
+                    <li><a>Womens</a></li>
+                  </ul>
+                </details>
+              </li>
+              <li><a>Contact</a></li>
+            </ul>
+          )}
   </div>
   <div className="navbar-end">
-    <button className="btn btn-ghost text-black  font-semibold" onClick={()=>setShowLogin(true)}>Sign In</button>
+  {user ? (
+          <div className="flex items-center gap-2">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7aEGesafKMJbW_OQPl97INDHAHt25yRbLNQ&s" alt="User Profile" className="w-8 h-8 rounded-full border border-black" />
+            <span className='text-black text-lg'>{user.username}</span>
+            <button className="btn btn-ghost text-black font-semibold" onClick={handleLogout}>
+              Sign Out
+            </button>
+          </div>
+        ) : (
+          <button className="btn btn-ghost text-black font-semibold" onClick={() => setShowLogin(true)}>
+            Sign In
+          </button>
+        )}
   </div>
 </div>
     </div>
