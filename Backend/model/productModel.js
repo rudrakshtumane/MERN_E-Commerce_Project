@@ -15,10 +15,11 @@ module.exports = mongoose.model("Product", productSchema);
 
 
 // {
-//     "name": "Casino tourbillon",
-//     "category":"watch" ,
-//     "price":$280000 ,
-//     "description":"Custom made for neymar jr" ,
-//     "quantity":2 ,
+//     "name": "Astronomia baguette tourbillon",
+//     "category":"66d55c083d0cc59012d153b0" ,
+//     "price":380000 ,
+//     "description":"Custom made for Conor McGregor" ,
+//     "quantity":5 ,
+//     "createdBy": "66cf07bdf67759ef9211947e" 
 
 // }

@@ -35,7 +35,7 @@ dotenv.config();
       if (!user || !(await user.comparePassword(password))) {
         return res.status(400).send({ error: 'Invalid login credentials' });
       }
-      const payload = { user: { id: user.id, role: user.role } };
+      const payload = { user: { id: user._id, role: user.role } };
       const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
       res.status(202).send({accessToken: token});
     } catch (error) {
