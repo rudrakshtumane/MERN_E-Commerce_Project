@@ -93,8 +93,10 @@ const Navbar = ({setShowLogin}) => {
   <div className="navbar-end">
   {user ? (
           <div className="flex items-center gap-2">
+            <div className='btn btn-ghost text-black font-semibold'>
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7aEGesafKMJbW_OQPl97INDHAHt25yRbLNQ&s" alt="User Profile" className="w-8 h-8 rounded-full border border-black" />
-            <span className='text-black text-lg'>{user.username}</span>
+            <span className='text-black font-semibold'>{user.username}</span>
+            </div>
             <button className="btn btn-ghost text-black font-semibold" onClick={handleLogout}>
               Sign Out
             </button>

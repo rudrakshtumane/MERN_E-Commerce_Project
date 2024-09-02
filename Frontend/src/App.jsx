@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import Navbar from "./components/Navbar";
 import LoginPopup from "./components/LoginPopup";
 import { Route, Routes } from "react-router-dom";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./pages/Dashboard";
 import { UserProvider } from './context/UserContext';
-import Home from "./components/Home";
+import Home from "./pages/Home";
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -17,7 +17,7 @@ const App = () => {
         {showLogin && <LoginPopup setShowLogin={setShowLogin}/>}
         <Routes>
           <Route path="/" element={<Home/>}/>
-          <Route path="/dashboard" element={<Dashboard/>}/>
+          <Route path="/dashboard/*" element={<Dashboard/>}/>
         </Routes>
         </div>
       </div>

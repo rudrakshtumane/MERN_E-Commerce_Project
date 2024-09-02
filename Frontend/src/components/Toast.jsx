@@ -8,7 +8,7 @@ const Toast = ({ message, type, onClose }) => {
     };
   
     return (
-      <div className={`fixed top-4 p-4 rounded-md shadow-lg ${toastClasses[type]}`}>
+      <div className={`fixed bottom-4 p-4 w-1/2 rounded-md shadow-lg ${toastClasses[type]}`}>
         <div className="flex">
           <div className="flex-1">
             {message}
