@@ -24,6 +24,7 @@ async function createCategory(req, res) {
   
   async function updateCategoryById(req, res) {
     const  id  = req.params.id;
+   
     const category = await Categories.findByIdAndUpdate(id, req.body);
     if (!category) {
       return res.status(404).send("Category not found");
