@@ -52,7 +52,7 @@ async function deleteProduct(req, res) {
     if (!deletedProduct) {
       return res.status(404).send();
     }
-    res.status(200).send(deletedProduct);
+    res.status(200).send({msg: "Product Deleted Successfully" });
   } catch (error) {
     res.status(500).send(error);
   }

@@ -7,7 +7,7 @@ const authorize = require('../middlewares/authorize')
 // PRODUCT
 router.post('/createProduct',authorize.auth, authorize.admin, productController.createProduct);
 // router.put('/updateProduct/:id', productController.updateProduct);
-// router.delete('/deleteProduct/:id', productController.deleteProduct);
+router.delete('/deleteProduct/:id', productController.deleteProduct);
 router.get('/getAllProduct',authorize.auth, productController.getAllProduct)
 // router.get('/getProductByCategoryname/:categoryName', productController.getProductByCategoryname);
 
