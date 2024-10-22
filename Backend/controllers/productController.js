@@ -3,10 +3,11 @@ const Category = require("../model/categoryModel");
 
 async function createProduct(req, res) {
   try {
-    const { name, category, price, description, inStock, quantity } = req.body;
+    const { name, category, price, inStock, quantity } = req.body;
+    const image = req.file ? req.file.path : null;
 
     // Validate required fields
-    if (!name || !category || !price || !description || !quantity) {
+    if (!name || !category || !price || !quantity) {
       return res.status(400).json({ msg: "All fields are required" });
     }
 
@@ -19,16 +20,18 @@ async function createProduct(req, res) {
     // Create a new product instance
     product = new Product({
       name,
+      image,
       category,
       price,
-      description,
-      inStock, // Handle as boolean directly
+      inStock,
       quantity,
       createdBy: req.user.id,
     });
 
     // Save the product to the database
     await product.save();
+    // Fetch all products to update the frontend
+    const products = await Product.find();
     res.status(201).json("Product added successfully");
   } catch (err) {
     console.error(err.message);
@@ -38,16 +41,38 @@ async function createProduct(req, res) {
 
 async function updateProduct(req, res) {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    if (!product) {
-      return res.status(404).send("Product not found");
+    const { name, category, price, inStock, quantity } = req.body;
+    const { id } = req.params;
+
+    // Log the incoming request data
+    console.log("Update product request data:", req.body);
+    console.log("Product ID:", id);
+
+    // Validate required fields
+    if (!id || !name || !category ||  !price || !quantity) {
+      return res.status(400).json({ msg: "Missing required fields" });
     }
-    res.status(200).send("Product Edited Successfully");
-  } catch (error) {
-    res.status(500).send(error);
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      {
+        name,
+        category,
+        price,
+        inStock,
+        quantity,
+      },
+      { new: true }
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({ msg: "Product not found" });
+    }
+
+    res.status(200).json(updatedProduct);
+  } catch (err) {
+    console.error("Error updating product:", err);
+    res.status(500).json({ msg: "Internal server error", error: err.message });
   }
 }
 
@@ -57,7 +82,7 @@ async function deleteProduct(req, res) {
     if (!deletedProduct) {
       return res.status(404).send("Product not found");
     }
-    res.status(200).send({msg: "Product Deleted Successfully" });
+    res.status(200).send({ msg: "Product Deleted Successfully" });
   } catch (error) {
     res.status(500).send(error);
   }
@@ -66,23 +91,61 @@ async function deleteProduct(req, res) {
 async function getAllProduct(req, res) {
   try {
     const products = await Product.find();
-     // Modify each person object to include fullName, profileImage, and other necessary fields
-const modifiedProducts = products.map(product => ({
-    id: product._id,
-    name:product.name,
-    category:product.category,
-    price:product.price,
-    description:product.description,
-    inStock:product.inStock ? 'InStock' : 'OutOfStock',
-    quantity:product.quantity,
-  }));
 
-  // Send the modified response
-  res.status(200).send(modifiedProducts);
-} catch (err) {
+    const modifiedProducts = products.map((product) => ({
+      id: product._id, // Use _id here
+      name: product.name,
+      image: product.image ? `http://localhost:5002/${product.image}` : null,
+      category: product.category,
+      price: product.price,
+      inStock: product.inStock ? "InStock" : "OutOfStock",
+      quantity: product.quantity,
+    }));
+
+    res.status(200).send(modifiedProducts);
+  } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
-}
+    res.status(500).send("Server error");
+  }
 }
 
-module.exports = { createProduct, updateProduct, deleteProduct, getAllProduct };
+async function getProductByCategory(req, res) {
+  const { id } = req.params;
+
+  try {
+    const category = await Category.findById(id);
+
+    if (!category) {
+      return res.status(404).json({ msg: "Category not found" });
+    }
+
+    const products = await Product.find({ category: category._id });
+
+    if (products.length === 0) {
+      return res
+        .status(404)
+        .json({ msg: "No products found for this category" });
+    }
+
+    const modifiedProducts = products.map((product) => ({
+      _id: product._id, // Use _id here as well
+      name: product.name,
+      image: product.image ? `http://localhost:5002/${product.image}` : null,
+      category: product.category,
+      price: product.price,
+    }));
+
+    res.status(200).json(modifiedProducts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Internal server error", error });
+  }
+}
+
+module.exports = {
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getAllProduct,
+  getProductByCategory,
+};
