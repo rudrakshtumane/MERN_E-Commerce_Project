@@ -64,7 +64,7 @@ const AddCategory = () => {
             value={CategoryName}
             onChange={(e) => setCategoryName(e.target.value)}
             placeholder="Enter category name"
-            className="w-full p-3 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full p-3 bg-white border border-gray-300 text-black rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
           ></input>
         </div>
         

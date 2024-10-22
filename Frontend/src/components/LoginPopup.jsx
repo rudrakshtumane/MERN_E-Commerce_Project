@@ -6,7 +6,6 @@ import { UserContext } from '../context/UserContext';
 import authService from '../service/AuthService';
 import Toast from './Toast';
 
-
 const LoginPopup = ({ setShowLogin }) => {
   const { setUser } = useContext(UserContext);
   const [currState, setCurrState] = useState("Sign Up");
@@ -24,8 +23,6 @@ const LoginPopup = ({ setShowLogin }) => {
     setTimeout(() => setToast({ ...toast, show: false }), 5000);
   };
 
-  
-
   const register = async (payload) => {
     try {
       const response = await axios.post('http://localhost:5002/api/user/registerUser', payload);
@@ -35,7 +32,6 @@ const LoginPopup = ({ setShowLogin }) => {
     } catch (error) {
       console.log(error);
       showToast('Registration failed. Please try again.', 'error');
-
     }
   };
 
@@ -46,7 +42,13 @@ const LoginPopup = ({ setShowLogin }) => {
       setUser(user);
       showToast('Login Successful!', 'success');
       setShowLogin(false);
-      navigate('/dashboard');
+
+      // Redirect based on user role
+      if (user.role === 'admin') {
+        navigate('/dashboard'); // Redirect to admin dashboard
+      } else if (user.role === 'user') {
+        navigate('/userDashboard'); // Redirect to user dashboard
+      }
     } catch (error) {
       showToast('Login failed. Please try again.', 'error');
     }

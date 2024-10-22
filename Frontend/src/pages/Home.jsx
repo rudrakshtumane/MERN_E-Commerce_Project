@@ -2,8 +2,10 @@ import React from 'react'
 import caro1 from '../assets/caro-1.jpeg'
 import caros1 from '../assets/caro-1-2.jpeg'
 
+
 const Home = () => {
   return (
+    <>
     <div className="carousel w-full h-[650px] bg-inherit">
   <div  className="carousel-item relative w-full">
     <img
@@ -15,6 +17,8 @@ const Home = () => {
     
   </div>
 </div>
+
+</>
 
   )
 }
